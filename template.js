@@ -49,30 +49,28 @@ module.exports = {
 							},
 							Enabled: true,
 							HttpVersion: 'http2',
-							CacheBehaviors: [
-								{
-									TargetOriginId: {
-										'Fn::Join': [
-											{Ref: 'apiId'},
-											'-',
-											{Ref: 'AWS::Region'},
-										]
+							DefaultCacheBehavior: {
+								TargetOriginId: {
+									'Fn::Join': [
+										{Ref: 'apiId'},
+										'-',
+										{Ref: 'AWS::Region'},
+									]
+								},
+								ForwardedValues: {
+									QueryString: true,
+									Cookies: {
+										Forward: 'none'
 									},
-									ForwardedValues: {
-										QueryString: true,
-										Cookies: {
-											Forward: 'none'
-										},
-										Headers: ['Origin', 'Authorization', 'Content-Type'],
-										
-									},
-									ViewerProtocolPolicy: 'allow-all',
-									AllowedMethods: ['GET'],
-									Compress: true,
-									DefaultTTL: 10,
+									Headers: ['Origin', 'Authorization', 'Content-Type'],
+									
+								},
+								ViewerProtocolPolicy: 'allow-all',
+								AllowedMethods: ['GET'],
+								Compress: true,
+								DefaultTTL: 10,
 
-								}
-							],
+							},
 							PriceClass: 'PriceClass_200'
 						}
 					]
