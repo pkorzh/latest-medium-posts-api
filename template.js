@@ -21,6 +21,57 @@ module.exports = {
 					'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
 				]
 			}
+		},
+		apiDistribution: {
+			Type: 'AWS::CloudFront::Distribution',
+			Properties: {
+				DistributionConfig: {
+					Origins: [
+						{
+							DomainName: {
+								'Fn::Join': [
+									'',
+									[{Ref: 'api'}, '.execute-api.', {Ref: 'AWS::Region'}, '.amazonaws.com']
+								]
+							},
+							Id: {
+								'Fn::Join': [
+									'',
+									[{Ref: 'api'}, '-', {Ref: 'AWS::Region'},]
+								]
+							},
+							CustomOriginConfig: {
+								OriginProtocolPolicy: 'https-only',
+								OriginSSLProtocols: ['TLSv1', 'TLSv1.1', 'TLSv1.2']
+							}
+						}
+					],
+					Enabled: true,
+					HttpVersion: 'http2',
+					DefaultCacheBehavior: {
+						TargetOriginId: {
+							'Fn::Join': [
+								'',
+								[{Ref: 'api'}, '-', {Ref: 'AWS::Region'},]
+							]
+						},
+						ForwardedValues: {
+							QueryString: true,
+							Cookies: {
+								Forward: 'none'
+							},
+							Headers: ['Origin', 'Authorization', 'Content-Type'],
+							
+						},
+						ViewerProtocolPolicy: 'allow-all',
+						AllowedMethods: ['HEAD', 'GET', 'OPTIONS'],
+						Compress: true,
+						DefaultTTL: 10,
+
+					},
+					PriceClass: 'PriceClass_200'
+				}		
+			}
 		}
 	},
 	Outputs: {}
